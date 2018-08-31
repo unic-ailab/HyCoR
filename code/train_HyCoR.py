@@ -6,7 +6,7 @@ from tensorflow.contrib import rnn
 import numpy as np
 import os
 import json
-os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR\\code')
+os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\code')
 
 from learn_metrics import calcMetric
 from HyCoR_model import HyCoR
