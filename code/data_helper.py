@@ -392,15 +392,14 @@ def _run_document_mode(fl_name, max_seqlen,rmv_stop_wrds,n_classes):
     return x,y,max_sequence_length,data_seqlens,vocab_size
 
 
-def _run_sentence_document_mode_1st_stage(fl_name, rmv_stop_wrds,n_classes,dataset_base):
+def _run_sentence_document_mode_pre_stage(fl_name, rmv_stop_wrds,n_classes,dataset_base):
     # set  data path folder
     os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
     print('loading dataset...')
     data_x,data_y = load_data(fl_name,n_classes) # e.g 'PG.xlsx' 
     print('calculating ' + dataset_base + ' values...')
     data_x,tmp_x= split_load_data_sentences(data_x)
-    
-   
+       
     vocabulary,vocab_size = create_vocabulary(tmp_x,rmv_stop_wrds)
     
     x, y, sequence_length =  data_to_integer(data_x,data_y,vocabulary,1000,1000)
@@ -418,7 +417,6 @@ def _run_sentence_document_mode_1st_stage(fl_name, rmv_stop_wrds,n_classes,datas
         
     return _Sentences, _Sequences
     
-
 def _run_sentence_document_mode(fl_name, max_seqlen, max_opinionlen,rmv_stop_wrds,n_classes):
     # set path folder
     os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
