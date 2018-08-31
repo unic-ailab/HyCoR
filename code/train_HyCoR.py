@@ -26,21 +26,22 @@ print('train file:', (filename[0:len(filename)-5]))
 
 # set the number of classes to train
 n_classes= 2
-# Remove stop words from dataset
+
+# remove stop words from dataset
 rmv_stop_wrds = False
  
 # set max or avg value (sets the how dataset will be exloited) 
-dataset_base ='avg'
+input_base ='avg'
  
 # preprocess dataset to calculate avg/max document and sentence length
-_oplen,_seqlen=data_helper._run_sentence_document_mode_1st_stage(filename, rmv_stop_wrds,n_classes,dataset_base)
+_oplen,_seqlen=data_helper._run_sentence_document_mode_pre_stage(filename, rmv_stop_wrds,n_classes,input_base)
 
-print(dataset_base + ' Sentences/Words per Sentence: ' + str(_oplen) + ' / ' + str(_seqlen))
+print(input_base + ' Sentences/Opinion Words/Sentence: ' + str(_oplen) + ' / ' + str(_seqlen))
 
-# load all preprocess parameters
+# preprocess the dataset
 x_,y,sentence_size,opinion_size,seqlengths,vocab_size =  data_helper._run_sentence_document_mode(filename,_seqlen,_oplen,rmv_stop_wrds,n_classes) 
 
-# monitor test accuracy for every loop
+# monitor test accuracy for every iteration
 metric_list=[]
 
 # set the number of experiments per dataset
@@ -48,7 +49,7 @@ n_experiments = 5
 
 for i in range(n_experiments):     
     
-    #  convert clases to one-hot
+    #  convert classes to one-hot vector
     y_ = np.eye(int(np.max(y) + 1))[np.int32(y)]
     
     print('creating train/test datasets...')
@@ -105,7 +106,7 @@ for i in range(n_experiments):
                 num_feature_maps = params['num_feature_maps'],
                 rnn_out_window=params['rnn_out_window'])
             
-            # set the optimizer
+            # set model's optimizer
             optimizer = tf.train.AdamOptimizer( learning_rate=params['learning_rate']).minimize(cnn_rnn.loss)
             # run and train the model
             sess.run(tf.global_variables_initializer())
@@ -115,7 +116,7 @@ for i in range(n_experiments):
             dev_writer = tf.summary.FileWriter('/tmp/tensorflowlogs' + '/dev',
                                             graph=tf.get_default_graph())
             
-            #initiate train/dev accuracies
+            # initiate train/dev accuracies
             acc=0
             _acc=0
             _count=0
