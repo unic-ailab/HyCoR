@@ -12,3 +12,4 @@ information how to run the model
 
 #3: the "training_config.json" file includes all the hyperparameter for model training.
 #4: open train_HyCoR.py as main file to train the model.
+ 
