@@ -251,47 +251,6 @@ def data_to_integer(tmp_x, _y_labels, vocabulary, _max_seqlen, _max_opinionlen):
         
     return _x_int,_y_labels, max_sequence
 
-def data_to_integer_document(tmp_x, _y_labels, vocabulary, _max_seqlen):
-    # store tmp max sequence
-    max_sequence = 0
-    
-    def word_to_integer(str,dictionary):
-        for index in dictionary:
-            tmp_value = 0
-            if index['token'] == str:
-                tmp_value =index['value']
-                break
-        return tmp_value
-                 
-    # store word to integers
-    _x_int = []
-    
-    # loop through sentences
-    for i in range(len(tmp_x)):
-        # store tmp sentence
-        sentence = tmp_x[i]
-        # store converted to integer sentence
-        tmp_int_sentences = []
-        
-        # cut sentence length greater than _max_seqlen value
-        if len(sentence.split()) > _max_seqlen:
-            # store text only
-            tmp_s =''
-            for sent in sentence.split()[:_max_seqlen]:
-                tmp_s += sent + ' '
-            # store cut tmp sentence
-            sentence = tmp_s
-        # map sentence sequence to vocabulary integers
-        seq_integer = [word_to_integer(token,vocabulary) for token in sentence.split()]
-        
-        # update maximum sequence 
-        if max_sequence < len(seq_integer):
-            max_sequence = len(seq_integer)
-        
-        # store tmp to integer sentence
-        _x_int.append(seq_integer)
-    return _x_int,_y_labels, max_sequence
-
 def calculate_document_length(documents):
     return max(len(x) for x in documents)
     
@@ -299,27 +258,6 @@ def calculate_sequence_length(num):
     if not num%2==0:
         num+=1
     return num
-
-
-def pad_documents(documents, padding_word="0"):
-    #  calculate maximum sequence length
-    sequence_length = calculate_document_length(documents)
-    
-    padded_documents = []
-    # loop through opinions
-    for i in range(len(documents)):
-        sentence = documents[i]
-        num_padding = sequence_length - len(sentence)      
-        tmp_array = np.concatenate([np.array(sentence),np.zeros(num_padding)])
-        padded_documents.append(tmp_array)
-        
-    return padded_documents, sequence_length
-
-def seqlengths(x):
-    tmp_x =[]
-    for i in range(len(x)):
-        tmp_x.append(len(x[i]))
-    return tmp_x
 
 
 def pad_documents_sentence_document(documents,_seq_length, padding_word="0"):
@@ -372,26 +310,6 @@ def next_batch(num, data, labels,seqlens,_has_seqns):
         return np.asarray(data_shuffle), np.asarray(labels_shuffle)
 
 
-def _run_document_mode(fl_name, max_seqlen,rmv_stop_wrds,n_classes):
-    # set data path folder
-    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
-    print('loading dataset...')
-    data_x,data_y = load_data(fl_name,n_classes)
-    print('converting to sequences...')
-    data_x,tmp_x= convert_load_data_to_word_sequences(data_x)
-    print('creating vocabulary...')
-    vocabulary,vocab_size = create_vocabulary(tmp_x,rmv_stop_wrds)
-    print('vocabulary size: %d' % vocab_size)
-    print('converting to sequence of integers...')
-    x, y, max_sequence_length =  data_to_integer_document(data_x,data_y,vocabulary,max_seqlen)
-    data_seqlens = seqlengths(x)
-    print('zero padding...')
-    x,  max_sequence_length = pad_documents(x)    
-    print('end of preprocessing...')
-    
-    return x,y,max_sequence_length,data_seqlens,vocab_size
-
-
 def _run_sentence_document_mode_pre_stage(fl_name, rmv_stop_wrds,n_classes,dataset_base):
     # set  data path folder
     os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
@@ -436,4 +354,3 @@ def _run_sentence_document_mode(fl_name, max_seqlen, max_opinionlen,rmv_stop_wrd
     print('end of preprocessing...')
     
     return x,y,max_sequence_length, document_size,data_seqlens,vocab_size
-  
