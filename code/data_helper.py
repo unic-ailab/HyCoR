@@ -374,7 +374,7 @@ def next_batch(num, data, labels,seqlens,_has_seqns):
 
 def _run_document_mode(fl_name, max_seqlen,rmv_stop_wrds,n_classes):
     # set data path folder
-    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR\\data')
+    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
     print('loading dataset...')
     data_x,data_y = load_data(fl_name,n_classes)
     print('converting to sequences...')
@@ -394,7 +394,7 @@ def _run_document_mode(fl_name, max_seqlen,rmv_stop_wrds,n_classes):
 
 def _run_sentence_document_mode_1st_stage(fl_name, rmv_stop_wrds,n_classes,dataset_base):
     # set  data path folder
-    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR\\data')
+    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
     print('loading dataset...')
     data_x,data_y = load_data(fl_name,n_classes) # e.g 'PG.xlsx' 
     print('calculating ' + dataset_base + ' values...')
@@ -421,7 +421,7 @@ def _run_sentence_document_mode_1st_stage(fl_name, rmv_stop_wrds,n_classes,datas
 
 def _run_sentence_document_mode(fl_name, max_seqlen, max_opinionlen,rmv_stop_wrds,n_classes):
     # set path folder
-    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR\\data')
+    os.chdir(os.environ['USERPROFILE'] +'\\Downloads\\HyCoR-master\\data')
     data_x,data_y = load_data(fl_name,n_classes) # e.g 'PG.xlsx' 
     print('converting to sequences...')
     data_x,tmp_x= split_load_data_sentences(data_x)
