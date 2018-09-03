@@ -227,10 +227,7 @@ class calcMetric(object):
                             normalize=False,
                             title='Confusion matrix',
                             cmap=plt.cm.Blues):
-        """
-        This function prints and plots the confusion matrix.
-        Normalization can be applied by setting `normalize=True`.
-        """
+       
         fig, ax = plt.subplots(figsize=(6.5, 6.5))
         plt.imshow(cm, interpolation='nearest', cmap=cmap)
         plt.title(title,fontsize=16)
