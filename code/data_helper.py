@@ -143,19 +143,6 @@ def split_load_data_sentences(_x):
         tmp_x.append(tmp_sentences)
     return tmp_x, _text
 
-def convert_load_data_to_word_sequences(_x):
-    # store text only 
-    _text=''
-    # store 
-    tmp_sequence = []
-    for document in range(len(_x)):
-        # get only the words in the sentence
-        tmp=re.sub('\W+',' ', _x[document]).strip()
-        tmp_s = []
-        if len(tmp)>0:
-            _text +=tmp + ' '  
-            tmp_sequence.append(tmp)
-    return tmp_sequence, _text
 
 def create_vocabulary(_text, rmv_stop_wrds):
     # create an empty network of model's vocabulary
@@ -260,7 +247,7 @@ def calculate_sequence_length(num):
     return num
 
 
-def pad_documents_sentence_document(documents,_seq_length, padding_word="0"):
+def pad_sentence_document_mode(documents,_seq_length, padding_word="0"):
     # calculate maximum sentences per opinion 
     document_length = calculate_document_length(documents)
     # calculate maximum sentence length
@@ -350,7 +337,7 @@ def _run_sentence_document_mode(fl_name, max_seqlen, max_opinionlen,rmv_stop_wrd
     
     data_seqlens = seq_sent_doc_lengths(x,max_opinionlen)
     print('zero padding...')
-    x, document_size, max_sequence_length = pad_documents_sentence_document(x,sequence_length)    
+    x, document_size, max_sequence_length = pad_sentence_document_mode(x,sequence_length)    
     print('end of preprocessing...')
     
     return x,y,max_sequence_length, document_size,data_seqlens,vocab_size
