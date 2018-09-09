@@ -30,26 +30,26 @@ n_classes= 2
 # remove stop words from dataset
 rmv_stop_wrds = False
  
-# set max or avg value (sets the how dataset will be exloited) 
+# set max or avg value (sets how the dataset will be exloited) 
 input_base ='avg'
  
-# preprocess dataset to calculate avg/max document and sentence length
+# preprocess dataset to calculate avg/max values
 _oplen,_seqlen=data_helper._run_sentence_document_mode_pre_stage(filename, rmv_stop_wrds,n_classes,input_base)
 
-print(input_base + ' Sentences/Opinion Words/Sentence: ' + str(_oplen) + ' / ' + str(_seqlen))
+print(input_base + ' num of Sentences/Opinion | num of Words/Sentence: ' + str(_oplen) + ' | ' + str(_seqlen))
 
 # preprocess the dataset
-x_,y,sentence_size,opinion_size,seqlengths,vocab_size =  data_helper._run_sentence_document_mode(filename,_seqlen,_oplen,rmv_stop_wrds,n_classes) 
+x_,y,sentence_size,opinion_size,seqlengths,vocab_size = data_helper._run_sentence_document_mode(filename,_seqlen,_oplen,rmv_stop_wrds,n_classes) 
 
-# monitor test accuracy for every iteration
+# monitor test accuracy for every experiment iteration
 metric_list=[]
 
-# set the number of experiments per dataset
+# set the number of experiments 
 n_experiments = 5
 
 for i in range(n_experiments):     
     
-    #  convert classes to one-hot vector
+    #  convert labels to one-hot vector
     y_ = np.eye(int(np.max(y) + 1))[np.int32(y)]
     
     print('creating train/test datasets...')
@@ -60,7 +60,7 @@ for i in range(n_experiments):
     x_train, x_dev,y_train,y_dev,seqlen_train,seqlen_dev =train_test_split(x_train,y_train,seqlen_train,test_size=0.1)
     
     # transform to numpy arrays
-    x_train ,x_dev,x_test, seqlen_train= np.asarray(x_train),np.asarray(x_dev), np.asarray(x_test), np.array(seqlen_train)
+    x_train,x_dev,x_test, seqlen_train = np.asarray(x_train),np.asarray(x_dev), np.asarray(x_test), np.array(seqlen_train)
     
     y_train,y_dev, y_test, seqlen_test = np.asarray(y_train),np.asarray(y_dev), np.asarray(y_test), np.array(seqlen_test)
     
@@ -70,7 +70,7 @@ for i in range(n_experiments):
     batch_size = params['batch_size']
     
     # set this value between [0.05,1] to change the iteration value (i.e. for small datasets ~ 0.1:0.4 for big datasets ~ 0.5:0.7)
-    iter_norm_factor =0.15
+    iter_norm_factor = 0.5
     # calculate training iterations
     training_iters = int(params['n_epochs']*(1/iter_norm_factor) * (int(len(x_train))/params['batch_size']))
     
@@ -95,7 +95,7 @@ for i in range(n_experiments):
     with graph.as_default():
         sess = tf.Session(config=config)
         with sess.as_default():
-            cnn_rnn = HyCoR(
+            hycor = HyCoR(
                 n_steps=x_train.shape[1],
                 n_input=x_train.shape[2],
                 n_classes = y_train.shape[1],
@@ -107,7 +107,7 @@ for i in range(n_experiments):
                 rnn_out_window=params['rnn_out_window'])
             
             # set model's optimizer
-            optimizer = tf.train.AdamOptimizer( learning_rate=params['learning_rate']).minimize(cnn_rnn.loss)
+            optimizer = tf.train.AdamOptimizer( learning_rate=params['learning_rate']).minimize(hycor.loss)
             # run and train the model
             sess.run(tf.global_variables_initializer())
             step = 1
@@ -127,22 +127,22 @@ for i in range(n_experiments):
                 # get train batch
                 batch_x, batch_y, batch_lengths =  data_helper.next_batch(batch_size, x_train,y_train, seqlen_train, True)
                 # monitor training accuracy information
-                summary,_ = sess.run([merged,optimizer], feed_dict={cnn_rnn.input_x: batch_x, cnn_rnn.input_y: batch_y,cnn_rnn.seqlen: batch_lengths, cnn_rnn.dropout_keep_prob: dyn_dropout})
+                summary,_ = sess.run([merged,optimizer], feed_dict={hycor.input_x: batch_x, hycor.input_y: batch_y,hycor.seqlen: batch_lengths, hycor.dropout_keep_prob: dyn_dropout})
                 
                 # Add to summaries
                 train_writer.add_summary(summary, step)
     
                 # Run optimization op (backprop)
-                sess.run(optimizer, feed_dict={cnn_rnn.input_x: batch_x, cnn_rnn.input_y: batch_y, cnn_rnn.seqlen: batch_lengths,  cnn_rnn.dropout_keep_prob: dyn_dropout})
+                sess.run(optimizer, feed_dict={hycor.input_x: batch_x, hycor.input_y: batch_y, hycor.seqlen: batch_lengths,  hycor.dropout_keep_prob: dyn_dropout})
                 
                 # monitor train accuracy information in python window
                 if step % params['display_step'] == 0:
                     
                     # Calculate batch accuracy and print
-                    acc = sess.run(cnn_rnn.accuracy, feed_dict={cnn_rnn.input_x: batch_x, cnn_rnn.input_y: batch_y ,cnn_rnn.seqlen: batch_lengths,  cnn_rnn.dropout_keep_prob: 1.0})
+                    acc = sess.run(hycor.accuracy, feed_dict={hycor.input_x: batch_x, hycor.input_y: batch_y ,hycor.seqlen: batch_lengths,  hycor.dropout_keep_prob: 1.0})
                     
                     # Calculate batch loss
-                    loss = sess.run(cnn_rnn.loss, feed_dict={cnn_rnn.input_x: batch_x, cnn_rnn.input_y: batch_y ,cnn_rnn.seqlen: batch_lengths, cnn_rnn.dropout_keep_prob: dyn_dropout})
+                    loss = sess.run(hycor.loss, feed_dict={hycor.input_x: batch_x, hycor.input_y: batch_y ,hycor.seqlen: batch_lengths, hycor.dropout_keep_prob: dyn_dropout})
     
                     print("Iter " + str(step) + ", Minibatch Loss= " + \
                         "{:.6f}".format(loss) + ", Accuracy= " + \
@@ -154,7 +154,7 @@ for i in range(n_experiments):
                     # get dev batch
                     batch_x, batch_y, batch_lengths  =  data_helper.next_batch((batch_size, int(x_dev.shape[0]) )[batch_size > int(x_dev.shape[0])], x_dev, y_dev, seqlen_dev, True)
                     
-                    summary, _acc = sess.run([merged,cnn_rnn.accuracy], feed_dict={cnn_rnn.input_x: batch_x, cnn_rnn.input_y: batch_y,cnn_rnn.seqlen: batch_lengths,  cnn_rnn.dropout_keep_prob: 1.0})
+                    summary, _acc = sess.run([merged,hycor.accuracy], feed_dict={hycor.input_x: batch_x, hycor.input_y: batch_y,hycor.seqlen: batch_lengths,  hycor.dropout_keep_prob: 1.0})
                     
                     #calculate new dropout
                     dyn_dropout, _count = calcMetric.calcDropout(acc,_acc,params['dropout_keep_prob'],_count)
@@ -176,11 +176,11 @@ for i in range(n_experiments):
             test_label = y_test[:test_len]
             test_seqs = seqlen_test[:test_len]
             
-            print("Overall Testing Accuracy:", sess.run(cnn_rnn.accuracy, feed_dict={cnn_rnn.input_x: test_data, cnn_rnn.input_y: test_label,cnn_rnn.seqlen: test_seqs, cnn_rnn.dropout_keep_prob: 1.0}))
+            print("Overall Testing Accuracy:", sess.run(hycor.accuracy, feed_dict={hycor.input_x: test_data, hycor.input_y: test_label,hycor.seqlen: test_seqs, hycor.dropout_keep_prob: 1.0}))
             
             # get actual labels
             actual = np.array([np.where(r==1)[0][0] for r in test_label])
-            predicted = cnn_rnn.logits.eval(feed_dict={cnn_rnn.input_x: test_data, cnn_rnn.dropout_keep_prob: 1.0})
+            predicted = hycor.logits.eval(feed_dict={hycor.input_x: test_data, hycor.dropout_keep_prob: 1.0})
             print('Confusion Matrix: (H:labels, V:Predictions)')
             cm = tf.confusion_matrix(actual,predicted,num_classes=y_train.shape[1])
             # get confusion matrix values
