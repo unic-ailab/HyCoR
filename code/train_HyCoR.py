@@ -83,7 +83,7 @@ for i in range(n_experiments):
     print('base_dropout: ' + str(params['dropout_keep_prob']))
     print('filter_sizes: ' + str(params['filter_sizes']))
     print('num_feature_maps: ' + str(params['num_feature_maps']))
-    print('rnn_out_window: ' + str(params['rnn_out_window']))
+    print('out_window_size: ' + str(params['out_window_size']))
     print('n_epochs: ' + str(params['n_epochs']))
     print('batch_size: ' + str(params['batch_size']))
     print('-------------------')
@@ -104,7 +104,7 @@ for i in range(n_experiments):
                 embedding_size=params['embedding_size'],
                 filter_sizes=[int(i) for i in params['filter_sizes'].split(',')],
                 num_feature_maps = params['num_feature_maps'],
-                rnn_out_window=params['rnn_out_window'])
+                out_window_size=params['out_window_size'])
             
             # set model's optimizer
             optimizer = tf.train.AdamOptimizer( learning_rate=params['learning_rate']).minimize(hycor.loss)
@@ -207,8 +207,3 @@ print(metric_list)
             
             # open cmd window and type the script to run and monitor training in tensorboard   
             # tensorboard --logdir=/tmp/tensorflowlogs   
-
-
-    
-    
-    
