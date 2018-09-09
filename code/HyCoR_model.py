@@ -41,15 +41,15 @@ class HyCoR(object):
                     
                     # convolution Layer
                     filter_shape = [filter_size, embedding_size, 1, num_feature_maps]
-                    W = tf.Variable(tf.truncated_normal(filter_shape, stddev=0.1), name='W_b^k')
-                    b = tf.Variable(tf.constant(0.1, shape=[num_feature_maps]), name='b^k')
+                    W = tf.Variable(tf.truncated_normal(filter_shape, stddev=0.1), name='W_b_k')
+                    b = tf.Variable(tf.constant(0.1, shape=[num_feature_maps]), name='b_k')
                     conv = tf.nn.conv2d(embedded_chars_expanded,W,strides=[1,1,1,1],padding='SAME',name='conv')
                     
                     # max pool over all sentence embeddings
                     pool_max =tf.reduce_max(conv,1,True)
                     
                     # apply nonlinearity
-                    c = tf.nn.tanh(tf.nn.bias_add(pool_max, b), name='c^k')
+                    c = tf.nn.tanh(tf.nn.bias_add(pool_max, b), name='c_k')
                     
                     pooled_outputs.append(c)
             
