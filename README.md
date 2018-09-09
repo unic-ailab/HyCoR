@@ -10,5 +10,5 @@ Information how to run the model
 	5th column : five classes labels if exist,
 	6th column : six classes labels if exist,
 	# for greater number of classes place labels at the corresponding column.
-#3: the "training_config.json" file includes all the hyperparameter for model training.
+#3: the "training_config.json" file includes all the hyperparameters for model training.
 #4: open train_HyCoR.py as main file to train the model.
