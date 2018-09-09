@@ -3,7 +3,7 @@
   "dropout_keep_prob": 0.65,
   "filter_sizes": "5",
   "num_feature_maps": 1,
-  "rnn_out_window": 0.25,
+    "out_window_size": 0.25,
   "learning_rate": 0.001,
   "batch_size": 64,
   "n_epochs": 15,
