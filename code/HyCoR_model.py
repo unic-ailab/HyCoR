@@ -97,7 +97,7 @@ class HyCoR(object):
             window = 1 if (int(n_steps*_window)==0) else int(n_steps*_window)
             
             # get forward path of output window size
-            forward_outputs = [tf.matmul(tf.slice(outputs[-1-i], [0, n_hidden], [-1, n_hidden]),tf.slice(weights[-1-i], [n_hidden, 0], [n_hidden, n_classes]))+ biases[-1-i] for i in range(window)] 
+            forward_outputs = [tf.matmul(tf.slice(outputs[-1-i], [0, 0], [-1, n_hidden]),tf.slice(weights[-1-i], [n_hidden, 0], [n_hidden, n_classes]))+ biases[-1-i] for i in range(window)] 
             # get backward path of output window size
             backward_outputs = [tf.matmul(tf.slice(outputs[i], [0, n_hidden], [-1, n_hidden]),tf.slice(weights[i], [n_hidden, 0], [n_hidden, n_classes]))+ biases[i] for i in range(window)]
             
