@@ -18,6 +18,7 @@ Pantelis Agathangelou and Ioannis Katakis. 2019. "A hybrid deep learning network
    - 5th column : labels for five classes or fine-grained classification, if exist,<br/>
    - 6th column : labels for six classes, if exist,<br/>
    - for many classes text classification, simply place the labels at the corresponding column.<br/>
+   
 3: the "training_config.json" file, includes the hyperparameters for training the model.<br/>
 4: The train_HyCoR.py is the main file to load & train the model.
 
