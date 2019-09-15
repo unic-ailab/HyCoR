@@ -13,13 +13,13 @@ Pantelis Agathangelou and Ioannis Katakis. 2019. "A hybrid deep learning network
 ## How to run the model
 1: the code-base is set to run without additional path settings, if it is downloaded and placed at the downloads folder <br/>
 2: the data folder must contain the datasets in excel format. The columns must be arranged in the folowing format:<br/>
-   -1st column : user's opinions,<br/>
-   -3rd column : labels for three classes classification task (for binary simply set n_classes=2 at the 'train_HyCoR.py' file,<br/>
-   -5th column : labels for five classes or fine-grained user content, if exist,<br/>
-   -6th column : labels for six classes labels if exist,<br/>
-   -for text classification of many classes, simply place the labels at the corresponding column.<br/>
-3: the "training_config.json" file, it includes all the hyperparameters for the training of the model.<br/>
-4: The train_HyCoR.py is the main file to train the model.
+   - 1st column : user's opinions,<br/>
+   - 3rd column : labels for three classes classification task (for binary simply set n_classes=2 at the 'train_HyCoR.py' file,<br/>
+   - 5th column : labels for five classes or fine-grained classification, if exist,<br/>
+   - 6th column : labels for six classes, if exist,<br/>
+   - for many classes text classification, simply place the labels at the corresponding column.<br/>
+3: the "training_config.json" file, includes the hyperparameters for training the model.<br/>
+4: The train_HyCoR.py is the main file to load & train the model.
 
 ## License
 The framework is open-sourced under the Apache 2.0 License base. The codebase of the framework is maintained by the authors for academic research and is therefore provided "as is".
